@@ -20,11 +20,31 @@ bool our::ShaderProgram::attach(const std::string &filename, GLenum type) const 
     const char* sourceCStr = sourceString.c_str();
     file.close();
 
+
     //TODO: Complete this function
     //Note: The function "checkForShaderCompilationErrors" checks if there is
     // an error in the given shader. You should use it to check if there is a
     // compilation error and print it so that you can know what is wrong with
     // the shader. The returned string will be empty if there is no errors.
+
+    GLuint shader = glCreateShader(type);
+    if (shader == 0)
+    {
+        std::cerr << "ERROR: Failed to create shader object." << std::endl;
+        return false;
+    }
+    glShaderSource(shader, 1, &sourceCStr, nullptr);
+    glCompileShader(shader);
+    std::string compilationError = checkForShaderCompilationErrors(shader);
+    if(!compilationError.empty()){
+        std::cerr << compilationError << std::endl;
+        glDeleteShader(shader);
+        return false;
+    }
+
+
+    glAttachShader(program, shader);
+
 
     //We return true if the compilation succeeded
     return true;
@@ -38,6 +58,14 @@ bool our::ShaderProgram::link() const {
     // an error in the given program. You should use it to check if there is a
     // linking error and print it so that you can know what is wrong with the
     // program. The returned string will be empty if there is no errors.
+    glLinkProgram(program);
+
+
+    std::string linkingError = checkForLinkingErrors(program);
+    if(!linkingError.empty()){
+        std::cerr << linkingError << std::endl;
+        return false;
+    }
 
     return true;
 }
@@ -47,9 +75,10 @@ bool our::ShaderProgram::link() const {
 ////////////////////////////////////////////////////////////////////
 
 std::string checkForShaderCompilationErrors(GLuint shader){
-     //Check and return any error in the compilation process
+    //Check and return any error in the compilation process
     GLint status;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+
     if (!status) {
         GLint length;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
@@ -59,6 +88,7 @@ std::string checkForShaderCompilationErrors(GLuint shader){
         delete[] logStr;
         return errorLog;
     }
+
     return std::string();
 }
 

@@ -13,8 +13,29 @@ out Varyings {
 // So two uniforms should be added: translation (vec2) and scale (vec2).
 // Each vertex "v" should be transformed to be "scale * v + translation".
 // The default value for "translation" is (0.0, 0.0) and for "scale" is (1.0, 1.0).
+uniform vec2 translation = vec2(0.0, 0.0);
+uniform vec2 scale = vec2(1.0, 1.0);
 
 //TODO: (Req 1) Finish this shader
 
 void main(){
+
+    vec3 vertices[] = vec3[](
+        vec3(-0.5, -0.5, 0),
+        vec3( 0.5, -0.5, 0),
+        vec3( 0.0,  0.5, 0)
+    );
+
+    
+
+    vec3 current_position = vertices[gl_VertexID];
+    current_position = vec3(scale.x * current_position.x + translation.x, scale.y * current_position.y + translation.y, current_position.z);    
+    
+    vs_out.color = vec3(
+        gl_VertexID == 0 ? 1.0 : 0.0,
+        gl_VertexID == 1 ? 1.0 : 0.0,
+        gl_VertexID == 2 ? 1.0 : 0.0
+    );
+
+    gl_Position = vec4(current_position, 1.0);
 }
