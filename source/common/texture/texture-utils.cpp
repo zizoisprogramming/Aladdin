@@ -8,7 +8,14 @@
 our::Texture2D* our::texture_utils::empty(GLenum format, glm::ivec2 size){
     our::Texture2D* texture = new our::Texture2D();
     //TODO: (Req 11) Finish this function to create an empty texture with the given size and format
+    texture->bind();
+    GLsizei levels = 1;
+    if (format != GL_DEPTH_COMPONENT24)
+    {
+        levels = (GLsizei)std::floor(std::log2((float)std::max(size[0], size[1]))) + 1;
+    }
 
+    glTexStorage2D(GL_TEXTURE_2D,levels,format,size.x,size.y);
     return texture;
 }
 
