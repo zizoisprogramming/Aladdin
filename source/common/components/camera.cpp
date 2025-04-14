@@ -35,7 +35,17 @@ namespace our {
         // - the center position which is the point (0,0,-1) but after being transformed by M
         // - the up direction which is the vector (0,1,0) but after being transformed by M
         // then you can use glm::lookAt
-        return glm::mat4(1.0f);
+        glm::vec4 eye = M * glm::vec4(0, 0, 0, 1);
+        glm::vec4 center = M * glm::vec4(0, 0, -1, 1);
+        glm::vec4 up = M * glm::vec4(0, 1, 0, 0);
+
+        glm::vec3 eyePos = glm::vec3(eye.x, eye.y, eye.z);
+        glm::vec3 centerPos = glm::vec3(center.x, center.y, center.z);
+        glm::vec3 upDir = glm::vec3(up.x, up.y, up.z);
+
+        glm::mat4 viewMatrix = glm::lookAt(eyePos, centerPos, upDir);
+        
+        return viewMatrix;
     }
 
     // Creates and returns the camera projection matrix
@@ -46,6 +56,21 @@ namespace our {
         // It takes left, right, bottom, top. Bottom is -orthoHeight/2 and Top is orthoHeight/2.
         // Left and Right are the same but after being multiplied by the aspect ratio
         // For the perspective camera, you can use glm::perspective
+        float aspectRatio = float(viewportSize.x) / float(viewportSize.y);
+        if(cameraType == CameraType::PERSPECTIVE) {
+            return glm::perspective(fovY, aspectRatio, near, far);
+        } else if(cameraType == CameraType::ORTHOGRAPHIC) {
+            float left = -orthoHeight * aspectRatio / 2.0f;
+            float right = orthoHeight * aspectRatio / 2.0f;
+            float bottom = -orthoHeight / 2.0f;
+            float top = orthoHeight / 2.0f;
+            return glm::ortho(left, right, bottom, top, near, far);
+        }
+        
+
+         // If the camera type is not recognized, return an identity matrix
+         // This should never happen if the camera was deserialized correctly
+         // but it's a good practice to have a fallback case
         return glm::mat4(1.0f);
     }
 }

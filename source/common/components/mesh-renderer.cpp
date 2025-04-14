@@ -9,7 +9,12 @@ namespace our {
         //TODO: (Req 8) Get the material and the mesh from the AssetLoader by their names
         // which are defined with the keys "mesh" and "material" in data.
         // Hint: To get a value of type T from a json object "data" where the key corresponding to the value is "key",
-        // you can use write: data["key"].get<T>().
+        // you can use write: data["key"].get<T>(). ??
         // Look at "source/common/asset-loader.hpp" to know how to use the static class AssetLoader.
+        std::string meshName = data.value("mesh", "");
+        std::string materialName = data.value("material", "");
+        mesh = AssetLoader<Mesh>::get(meshName);
+        material = AssetLoader<Material>::get(materialName);
+
     }
 }
