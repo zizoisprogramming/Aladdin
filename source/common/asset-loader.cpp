@@ -8,6 +8,7 @@
 #include "mesh/mesh-utils.hpp"
 #include "material/material.hpp"
 #include "deserialize-utils.hpp"
+#include<fstream>
 
 namespace our {
 
