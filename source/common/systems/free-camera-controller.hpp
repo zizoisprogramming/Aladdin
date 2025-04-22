@@ -27,6 +27,12 @@ namespace our
             this->app = app;
         }
 
+        void checkEnd(glm::vec3& position) {
+            if (position.z <= -1) {
+                app->changeState("won");
+            }
+        }
+
         // This should be called every frame to update all entities containing a FreeCameraControllerComponent 
         void update(World* world, float deltaTime) {
             // First of all, we search for an entity containing both a CameraComponent and a FreeCameraControllerComponent
@@ -98,6 +104,8 @@ namespace our
             // A & D moves the player left or right 
             if(app->getKeyboard().isPressed(GLFW_KEY_D)) position += right * (deltaTime * current_sensitivity.x);
             if(app->getKeyboard().isPressed(GLFW_KEY_A)) position -= right * (deltaTime * current_sensitivity.x);
+
+            checkEnd(position);
         }
 
         // When the state exits, it should call this function to ensure the mouse is unlocked
