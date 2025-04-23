@@ -85,6 +85,8 @@ set(COMMON_SOURCES
         source/common/components/movement.cpp
         source/common/components/generate.hpp
         source/common/components/generate.cpp
+        source/common/components/collision.hpp
+        source/common/components/collision.cpp
         source/common/components/component-deserializer.hpp
 
         source/common/systems/forward-renderer.hpp
@@ -92,6 +94,7 @@ set(COMMON_SOURCES
         source/common/systems/free-camera-controller.hpp
         source/common/systems/movement.hpp
         source/common/systems/generate.hpp
+        source/common/systems/collision.hpp
 )
 
 # Define the directories in which to search for the included headers
