@@ -27,7 +27,7 @@ namespace our
                 if (generate) {
                     first = true;
                     if (generate->hide) {
-                        entity->localTransform.position = glm::vec3(0, 1, -1);
+                        entity->localTransform.position = glm::vec3(0, 0, -3);
                         generate->hide = false;
                         first = false;
                     }
@@ -49,9 +49,9 @@ namespace our
                 float randomY = distY(gen);
 
                 nlohmann::json data = {
-                    {"position", {randomX, randomY, 0}},
+                    {"position", {randomX, randomY, -3}},
                     {"rotation", {0, 0, 0}},
-                    {"scale", {0.125, 0.25, 0.25}},
+                    {"scale", {0.25, 0.25, 0.25}},
                     {"hide", false},
                     {"components", {
                         {
@@ -66,6 +66,12 @@ namespace our
                             {"type", "Movement"},
                             {"linearVelocity", {0, 0, 3}},
                             {"angularVelocity", {0, 0, 0}}
+                        },
+                        {
+                            {"type", "Collision"},
+                            {"x", 0.25},
+                            {"y", 0.25},
+                            {"z", 0.25}
                         }
                     }}
                 };

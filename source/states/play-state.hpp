@@ -7,6 +7,8 @@
 #include <systems/free-camera-controller.hpp>
 #include <systems/movement.hpp>
 #include <systems/generate.hpp>
+#include <systems/collision.hpp>
+
 #include <asset-loader.hpp>
 
 // This state shows how to use the ECS framework and deserialization.
@@ -17,6 +19,7 @@ class Playstate: public our::State {
     our::FreeCameraControllerSystem cameraController;
     our::MovementSystem movementSystem;
     our::GenerateSystem generateSystem;
+    our::CollisionSystem collisionSystem;
 
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
@@ -41,6 +44,9 @@ class Playstate: public our::State {
         movementSystem.update(&world, (float)deltaTime);
         cameraController.update(&world, (float)deltaTime);
         generateSystem.update(&world, (float)deltaTime);
+        if (collisionSystem.update(&world, (float)deltaTime))
+            getApp()->changeState("lost");
+        
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
 
