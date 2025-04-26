@@ -28,13 +28,13 @@ namespace our
         }
 
         void checkEnd(glm::vec3& position) {
-            if (position.z <= -1) {
+            if (position.z <= -1) { // change villain  // Serialize this
                 app->changeState("won");
             }
         }
 
         // This should be called every frame to update all entities containing a FreeCameraControllerComponent 
-        void update(World* world, float deltaTime) {
+        glm::vec3 update(World* world, float deltaTime) {
             // First of all, we search for an entity containing both a CameraComponent and a FreeCameraControllerComponent
             // As soon as we find one, we break
             CameraComponent* camera = nullptr;
@@ -45,7 +45,7 @@ namespace our
                 if(camera && controller) break;
             }
             // If there is no entity with both a CameraComponent and a FreeCameraControllerComponent, we can do nothing so we return
-            if(!(camera && controller)) return;
+            if(!(camera && controller)) return {0, 0, 0};
             // Get the entity that we found via getOwner of camera (we could use controller->getOwner())
             Entity* entity = camera->getOwner();
 
@@ -97,15 +97,22 @@ namespace our
             // We change the camera position based on the keys WASD/QE
             // S & W moves the player back and forth
             if(app->getKeyboard().isPressed(GLFW_KEY_W)) position += front * (deltaTime * current_sensitivity.z);
-            if(app->getKeyboard().isPressed(GLFW_KEY_S)) position -= front * (deltaTime * current_sensitivity.z);
+            // if(app->getKeyboard().isPressed(GLFW_KEY_S)) position -= front * (deltaTime * current_sensitivity.z); // no back
             // Q & E moves the player up and down
             if(app->getKeyboard().isPressed(GLFW_KEY_Q)) position += up * (deltaTime * current_sensitivity.y);
             if(app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * (deltaTime * current_sensitivity.y);
             // A & D moves the player left or right 
-            if(app->getKeyboard().isPressed(GLFW_KEY_D)) position += right * (deltaTime * current_sensitivity.x);
-            if(app->getKeyboard().isPressed(GLFW_KEY_A)) position -= right * (deltaTime * current_sensitivity.x);
+            if(app->getKeyboard().isPressed(GLFW_KEY_D)) {
+                if (!((position + right * (deltaTime * current_sensitivity.x)).x >= (6 - 2))) // Serialize this
+                    position += right * (deltaTime * current_sensitivity.x);
+            }
+            if(app->getKeyboard().isPressed(GLFW_KEY_A)) {
+                if (!((position - right * (deltaTime * current_sensitivity.x)).x <= (-6 + 2)))  // Serialize this
+                    position -= right * (deltaTime * current_sensitivity.x);
+            }
 
             checkEnd(position);
+            return position;
         }
 
         // When the state exits, it should call this function to ensure the mouse is unlocked

@@ -17,9 +17,9 @@ namespace our
 {
     class GenerateSystem {
         float till_now = 0;
-        int req = 1;
+        float threshold = 1.0;
     public:
-        void update(World* world, float deltaTime) {
+        void update(World* world, float deltaTime, bool level_up = false) {
             till_now += deltaTime;
             bool first = false;
             for (auto entity : world->getEntities()) {
@@ -33,8 +33,10 @@ namespace our
                     }
                 }
             }
+            if (level_up)
+                threshold -= 0.4;
 
-            if (first && till_now >= 1.0f) {
+            if (first && till_now >= threshold) {
                 till_now = 0;
 
                 Entity* newEntity = world->add(); 
@@ -49,7 +51,7 @@ namespace our
                 float randomY = distY(gen);
 
                 nlohmann::json data = {
-                    {"position", {randomX, randomY, -3}},
+                    {"position", {randomX, randomY, -3}}, // change villain
                     {"rotation", {0, 0, 0}},
                     {"scale", {0.25, 0.25, 0.25}},
                     {"hide", false},

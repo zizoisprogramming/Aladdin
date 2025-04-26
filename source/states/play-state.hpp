@@ -8,6 +8,7 @@
 #include <systems/movement.hpp>
 #include <systems/generate.hpp>
 #include <systems/collision.hpp>
+#include<fstream>
 
 #include <asset-loader.hpp>
 
@@ -20,6 +21,10 @@ class Playstate: public our::State {
     our::MovementSystem movementSystem;
     our::GenerateSystem generateSystem;
     our::CollisionSystem collisionSystem;
+
+    float levels[3] = {10, 7, 3};
+    int curr_ind = 0;
+    bool not_again = false;
 
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
@@ -42,8 +47,20 @@ class Playstate: public our::State {
     void onDraw(double deltaTime) override {
         // Here, we just run a bunch of systems to control the world logic
         movementSystem.update(&world, (float)deltaTime);
-        cameraController.update(&world, (float)deltaTime);
-        generateSystem.update(&world, (float)deltaTime);
+        glm::vec3 position = cameraController.update(&world, (float)deltaTime);
+        bool flag = false;
+        std::ofstream outputFile;
+        
+        outputFile.open("C:/Users/Acer/Desktop/Graphics Project/Aladdin/collision_log.txt");   
+        outputFile << "X: " << position.x << " Y: " << position.y << " Z: " << position.z << "\n";
+        if (!not_again && position.z <= levels[curr_ind]){
+            curr_ind = (curr_ind + 1) % 3;
+            if (curr_ind == 0)
+                not_again = true;
+            else
+                flag = true;
+        }
+        generateSystem.update(&world, (float)deltaTime, flag);
         if (collisionSystem.update(&world, (float)deltaTime))
             getApp()->changeState("lost");
         
