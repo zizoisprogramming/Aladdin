@@ -8,6 +8,7 @@
 #include <glad/gl.h>
 #include <vector>
 #include <algorithm>
+#include <GLFW/glfw3.h>
 
 namespace our
 {
@@ -40,6 +41,14 @@ namespace our
         GLuint postprocessFrameBuffer, postProcessVertexArray;
         Texture2D *colorTarget, *depthTarget;
         TexturedMaterial* postprocessMaterial;
+
+        std::unordered_map<std::string, ShaderProgram*> postprocessShaders;
+        std::string currentEffect = "shake";
+
+        bool shaking = false;
+        double shakeStartTime = -1.0;
+        double shakeDuration = 5.0;
+
     public:
         // Initialize the renderer including the sky and the Postprocessing objects.
         // windowSize is the width & height of the window (in pixels).
@@ -49,7 +58,21 @@ namespace our
         // This function should be called every frame to draw the given world
         void render(World* world);
 
-
+        void switchEffect(const std::string& newEffect) {
+            std::cerr << newEffect<< std::endl;
+            if (postprocessShaders.count(newEffect)) {
+                currentEffect = newEffect;
+                postprocessMaterial->shader = postprocessShaders[currentEffect];
+                postprocessMaterial->shader->set("time", float(glfwGetTime()));
+            }
+        }
+        void startShake() {
+            if (postprocessShaders.count("shake")) {
+                currentEffect = "shake";
+                shakeStartTime = glfwGetTime();
+                shaking = true;
+            }
+        }
     };
 
 }
