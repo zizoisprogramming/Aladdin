@@ -40,7 +40,7 @@ out vec4 frag_color;
 
     // This will be used to compute the phong specular.
     float calculate_phong(vec3 normal, vec3 light_direction, vec3 view, float shininess){
-        vec3 reflected = reflect(light_direction, normal);
+        vec3 reflected = reflect(-light_direction, normal);
         return pow(max(0.0f, dot(view, reflected)), shininess);
     }
 
@@ -96,10 +96,9 @@ void main() {
         // Compute light components (diffuse, specular, ambient)
         vec3 diffuse_component = albedo * light.color * diff;
         vec3 specular_component = specular_map_value * light.color * spec;
-        vec3 ambient_component = albedo * light.color * ao;
 
         // Accumulate light contributions
-        accumulated_light += (diffuse_component + specular_component + ambient_component) * attenuation;
+        accumulated_light += (diffuse_component + specular_component ) * attenuation;
     }
 
     // Output final fragment color

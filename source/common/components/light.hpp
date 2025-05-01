@@ -19,6 +19,8 @@ namespace our {
             Spot
         };
         LightType type = LightType::Point;  // default is point light
+        glm::vec3 direction = glm::vec3(0.0f, 0.0f, -1.0f); // Direction of the light (used for Directional and Spot lights)
+        glm::vec3 position = glm::vec3(0.0f, 0.0f, -1.0f); 
         struct {
             float constant, linear, quadratic;
         } attenuation; // Used for Point and Spot Lights only

@@ -232,8 +232,8 @@ namespace our {
                     std::string prefix = "lights[" + std::to_string(i) + "].";
             
                     glm::mat4 lightMatrix = light->getOwner()->getLocalToWorldMatrix();
-                    glm::vec3 position = glm::vec3(lightMatrix * glm::vec4(0, 0, 0, 1));
-                    glm::vec3 direction = glm::normalize(glm::vec3(lightMatrix * glm::vec4(0, 0, -1, 0)));
+                    glm::vec3 position = glm::vec3(lightMatrix * glm::vec4(light->position,1.0));
+                    glm::vec3 direction = glm::normalize(glm::vec3(lightMatrix * glm::vec4(light->direction,0.0)));
         
                     // Set type
                     int typeInt = 0;
