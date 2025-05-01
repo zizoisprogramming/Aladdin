@@ -40,7 +40,7 @@ namespace our
         TexturedMaterial* skyMaterial;
         //Objects used for lighting
         std::vector<LightComponent*> lights;
-        glm::vec3 ambientLight = glm::vec3(1.0f);
+        glm::vec3 ambientLight = glm::vec3(0.2f);
 
 
 
