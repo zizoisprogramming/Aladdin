@@ -212,20 +212,20 @@ namespace our {
                 ShaderProgram* shader = command.material->shader;
                 shader->use();
                 command.material->shader->set("transform", VP * command.localToWorld);
+                
+                // Set all light uniforms
+            // only if material is lit compare with dynamic_cast
+            if (auto litMaterial = dynamic_cast<LitMaterial*>(command.material)) {
                 //for lighting shaders
                 command.material->shader->set("object_to_world", command.localToWorld);
                 command.material->shader->set("object_to_world_inv_transpose", glm::transpose(glm::inverse(command.localToWorld)));
 
                 shader->set("view_projection", VP);
-                shader->set("model", command.localToWorld);
                 shader->set("camera_position", eye); // camera world position
                 shader->set("ambient_light", ambientLight);
                 std::cout <<"ambient light: " << ambientLight.x << " " << ambientLight.y << " " << ambientLight.z << std::endl;
                 shader->set("light_count", static_cast<int>(lights.size()));
                 
-                // Set all light uniforms
-            // only if material is lit compare with dynamic_cast
-            if (auto litMaterial = dynamic_cast<LitMaterial*>(command.material)) {
                
                 for (int i = 0; i < lights.size() && i < MAX_LIGHTS; i++) {
                     auto* light = lights[i];

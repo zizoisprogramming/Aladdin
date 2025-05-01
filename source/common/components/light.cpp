@@ -7,8 +7,8 @@ namespace our {
         if (data.contains("color")) { //light color
             color = glm::vec3(data["color"][0], data["color"][1], data["color"][2]);
         }
-        if (data.contains("type")) {
-            std::string typeStr = data["type"];
+        if (data.contains("lightType")) {
+            std::string typeStr = data["lightType"];
             if (typeStr == "Point") {
                 type = LightType::Point;
             } else if (typeStr == "Directional") {
