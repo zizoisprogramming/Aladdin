@@ -63,4 +63,51 @@ namespace our {
         sampler = AssetLoader<Sampler>::get(data.value("sampler", ""));
     }
 
+    void LitMaterial::setup() const {
+        TexturedMaterial::setup();
+    
+        // Set uniforms for lighting maps
+        if (albedoMap) {
+            glActiveTexture(GL_TEXTURE1);
+            albedoMap->bind();
+            shader->set("albedoMap", 1);
+        }
+    
+        if (specularMap) {
+            glActiveTexture(GL_TEXTURE2);
+            specularMap->bind();
+            shader->set("specularMap", 2);
+        }
+    
+        if (roughnessMap) {
+            glActiveTexture(GL_TEXTURE3);
+            roughnessMap->bind();
+            shader->set("roughnessMap", 3);
+        }
+    
+        if (aoMap) {
+            glActiveTexture(GL_TEXTURE4);
+            aoMap->bind();
+            shader->set("aoMap", 4);
+        }
+    
+        if (emissionMap) {
+            glActiveTexture(GL_TEXTURE5);
+            emissionMap->bind();
+            shader->set("emissionMap", 5);
+        }
+    }
+    
+    void LitMaterial::deserialize(const nlohmann::json& data) {
+        TexturedMaterial::deserialize(data);
+        if (!data.is_object()) return;
+    
+        albedoMap = AssetLoader<Texture2D>::get(data.value("albedoMap", ""));
+        specularMap = AssetLoader<Texture2D>::get(data.value("specularMap", ""));
+        roughnessMap = AssetLoader<Texture2D>::get(data.value("roughnessMap", ""));
+        aoMap = AssetLoader<Texture2D>::get(data.value("aoMap", ""));
+        emissionMap = AssetLoader<Texture2D>::get(data.value("emissionMap", ""));
+    }
+    
+
 }
