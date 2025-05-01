@@ -2,6 +2,9 @@
 #include "../mesh/mesh-utils.hpp"
 #include "../texture/texture-utils.hpp"
 #include<fstream>
+#include<algorithm>
+#include<unordered_set>
+#define MAX_LIGHTS 8 // Maximum number of lights supported
 
 namespace our {
 
@@ -51,48 +54,6 @@ namespace our {
             this->skyMaterial->transparent = false;
         }
 
-        // Then we check if there is a postprocessing shader in the configuration
-        // if(config.contains("postprocess")){
-        //     //TODO: (Req 11) Create a framebuffer 
-        //     glGenFramebuffers(1, &postprocessFrameBuffer);
-        //     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postprocessFrameBuffer);
-
-        //     //TODO: (Req 11) Create a color and a depth texture and attach them to the framebuffer
-        //     // Hints: The color format can be (Red, Green, Blue and Alpha components with 8 bits for each channel).
-        //     // The depth format can be (Depth component with 24 bits).
-        //     colorTarget = texture_utils::empty(GL_RGBA8, windowSize);
-        //     depthTarget = texture_utils::empty(GL_DEPTH_COMPONENT24, windowSize);
-        //     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D, colorTarget->getOpenGLName(), 0);
-        //     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, depthTarget->getOpenGLName(), 0);
-
-        //     //TODO: (Req 11) Unbind the framebuffer just to be safe
-        //     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-        //     // Create a vertex array to use for drawing the texture
-        //     glGenVertexArrays(1, &postProcessVertexArray);
-
-        //     // Create a sampler to use for sampling the scene texture in the post processing shader
-        //     Sampler* postprocessSampler = new Sampler();
-        //     postprocessSampler->set(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        //     postprocessSampler->set(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        //     postprocessSampler->set(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        //     postprocessSampler->set(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-        //     // Create the post processing shader
-        //     ShaderProgram* postprocessShader = new ShaderProgram();
-        //     postprocessShader->attach("assets/shaders/fullscreen.vert", GL_VERTEX_SHADER);
-        //     postprocessShader->attach(config.value<std::string>("postprocess", ""), GL_FRAGMENT_SHADER);
-        //     postprocessShader->link();
-
-        //     // Create a post processing material
-        //     postprocessMaterial = new TexturedMaterial();
-        //     postprocessMaterial->shader = postprocessShader;
-        //     postprocessMaterial->texture = colorTarget;
-        //     postprocessMaterial->sampler = postprocessSampler;
-        //     // The default options are fine but we don't need to interact with the depth buffer
-        //     // so it is more performant to disable the depth mask
-        //     postprocessMaterial->pipelineState.depthMask = false;
-        // }
 
         if(config.contains("postprocessEffects")) {
             // === Framebuffer Setup ===
@@ -237,19 +198,69 @@ namespace our {
 
         //TODO: (Req 9) Clear the color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+        //
+
+
+
+    
+
         //TODO: (Req 9) Draw all the opaque commands
         // Don't forget to set the "transform" uniform to be equal the model-view-projection matrix for each render command
         for(auto& command : opaqueCommands){
-            command.material->setup();
-            command.material->shader->set("transform", VP * command.localToWorld);
-            //for lighting shaders
-            command.material->shader->set("camera_position", eye);
-            command.material->shader->set("object_to_world", command.localToWorld);
-            command.material->shader->set("object_to_world_inv_transpose", glm::transpose(glm::inverse(command.localToWorld)));
-            command.material->shader->set("view_projection", VP);
+                command.material->setup();
+                ShaderProgram* shader = command.material->shader;
+                shader->use();
+                command.material->shader->set("transform", VP * command.localToWorld);
+                //for lighting shaders
+                command.material->shader->set("object_to_world", command.localToWorld);
+                command.material->shader->set("object_to_world_inv_transpose", glm::transpose(glm::inverse(command.localToWorld)));
 
-            command.mesh->draw();
+                shader->set("view_projection", VP);
+                shader->set("model", command.localToWorld);
+                shader->set("camera_position", eye); // camera world position
+                shader->set("ambient_light", ambientLight);
+                std::cout <<"ambient light: " << ambientLight.x << " " << ambientLight.y << " " << ambientLight.z << std::endl;
+                shader->set("light_count", static_cast<int>(lights.size()));
+                
+                // Set all light uniforms
+            // only if material is lit compare with dynamic_cast
+            if (auto litMaterial = dynamic_cast<LitMaterial*>(command.material)) {
+               
+                for (int i = 0; i < lights.size() && i < MAX_LIGHTS; i++) {
+                    auto* light = lights[i];
+                    std::string prefix = "lights[" + std::to_string(i) + "].";
+            
+                    glm::mat4 lightMatrix = light->getOwner()->getLocalToWorldMatrix();
+                    glm::vec3 position = glm::vec3(lightMatrix * glm::vec4(0, 0, 0, 1));
+                    glm::vec3 direction = glm::normalize(glm::vec3(lightMatrix * glm::vec4(0, 0, -1, 0)));
+        
+                    // Set type
+                    int typeInt = 0;
+                    switch (light->type) {
+                        case LightComponent::LightType::Directional: typeInt = 0; break;
+                        case LightComponent::LightType::Point:       typeInt = 1; break;
+                        case LightComponent::LightType::Spot:        typeInt = 2; break;
+                    }
+        
+                    // Set shader uniforms
+                    shader->set(prefix + "type", typeInt);
+                    shader->set(prefix + "color", light->color);
+                    shader->set(prefix + "position", position);
+                    shader->set(prefix + "direction", direction);
+                    shader->set(prefix + "attenuation", glm::vec3{
+                        light->attenuation.constant,
+                        light->attenuation.linear,
+                        light->attenuation.quadratic
+                    });
+                    shader->set(prefix + "cone_angles", glm::vec2{
+                        light->spot_angle.inner,
+                        light->spot_angle.outer
+                    });
+                }
+            }
+        
+                command.mesh->draw();
+           
         }
         
         // If there is a sky material, draw the sky
