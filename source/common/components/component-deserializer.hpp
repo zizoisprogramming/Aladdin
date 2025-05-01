@@ -6,6 +6,7 @@
 #include "free-camera-controller.hpp"
 #include "generate.hpp"
 #include "movement.hpp"
+#include "light.hpp"
 #include "collision.hpp"
 #include<fstream>
 
@@ -19,6 +20,8 @@ namespace our {
         //TODO: (Req 8) Add an option to deserialize a "MeshRendererComponent" to the following if-else statement
         if(type == CameraComponent::getID()){
             component = entity->addComponent<CameraComponent>();
+        } else if(type == LightComponent::getID()){
+            component = entity->addComponent<LightComponent>();
         } else if (type == FreeCameraControllerComponent::getID()) {
             component = entity->addComponent<FreeCameraControllerComponent>();
         } else if (type == MovementComponent::getID()) {
