@@ -37,10 +37,14 @@ class Playstate: public our::State {
         if(config.contains("world")){
             world.deserialize(config["world"]);
         }
+    
         // We initialize the camera controller system since it needs a pointer to the app
         cameraController.enter(getApp());
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
+        curr_ind = 0;
+        not_again = false;
+        generateSystem.resetParameters();
         renderer.initialize(size, config["renderer"]);
     }
 
@@ -49,10 +53,7 @@ class Playstate: public our::State {
         movementSystem.update(&world, (float)deltaTime);
         glm::vec3 position = cameraController.update(&world, (float)deltaTime);
         bool flag = false;
-        std::ofstream outputFile;
         
-        outputFile.open("C:/Users/Acer/Desktop/Graphics Project/Aladdin/collision_log.txt");   
-        outputFile << "X: " << position.x << " Y: " << position.y << " Z: " << position.z << "\n";
         if (!not_again && position.z <= levels[curr_ind]){
             curr_ind = (curr_ind + 1) % 3;
             if (curr_ind == 0)
@@ -86,4 +87,5 @@ class Playstate: public our::State {
         // and we delete all the loaded assets to free memory on the RAM and the VRAM
         our::clearAllAssets();
     }
+
 };

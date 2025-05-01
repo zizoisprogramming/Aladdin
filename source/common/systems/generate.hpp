@@ -19,6 +19,11 @@ namespace our
         float till_now = 0;
         float threshold = 1.0;
     public:
+
+        void resetParameters() {
+            till_now = 0;
+            threshold = 1.0;
+        }
         void update(World* world, float deltaTime, bool level_up = false) {
             till_now += deltaTime;
             bool first = false;

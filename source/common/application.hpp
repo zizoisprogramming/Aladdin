@@ -104,6 +104,7 @@ namespace our {
             }
         }
 
+
         // Closes the Application
         void close(){
             glfwSetWindowShouldClose(window, GLFW_TRUE);

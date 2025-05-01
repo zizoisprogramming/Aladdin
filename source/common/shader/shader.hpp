@@ -52,7 +52,7 @@ namespace our {
             //TODO: (Req 1) Return the location of the uniform with the given name
             GLuint loc = glGetUniformLocation(program, name.c_str());
             if (loc == -1) {
-                std::cerr << "Uniform " << name << " not found" << std::endl;
+                // std::cerr << "Uniform " << name << " not found" << std::endl;
             }
             return static_cast<GLuint>(loc);
         }
