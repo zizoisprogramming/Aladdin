@@ -18,11 +18,27 @@ namespace our
     class GenerateSystem {
         float till_now = 0;
         float threshold = 1.0;
+        std::string config_path = "config/generate.jsonc";
     public:
 
         void resetParameters() {
             till_now = 0;
             threshold = 1.0;
+        }
+
+        nlohmann::json readGenerateConfig(float randomX, float randomY) {
+            std::ifstream file_in(config_path);
+            if(!file_in){
+                std::cerr << "Couldn't open file: " << config_path << std::endl;
+                return -1;
+            }
+            // Read the file into a json object then close the file
+            nlohmann::json app_config = nlohmann::json::parse(file_in, nullptr, true, true);
+            file_in.close();
+
+            app_config["position"] = {randomX, randomY, -3};
+
+            return app_config;
         }
         void update(World* world, float deltaTime, bool level_up = false) {
             till_now += deltaTime;
@@ -55,33 +71,8 @@ namespace our
                 float randomX = distX(gen);
                 float randomY = distY(gen);
 
-                nlohmann::json data = {
-                    {"position", {randomX, randomY, -3}}, // change villain
-                    {"rotation", {0, 0, 0}},
-                    {"scale", {0.25, 0.25, 0.25}},
-                    {"hide", false},
-                    {"components", {
-                        {
-                            {"type", "Generate"}
-                        },
-                        {
-                            {"type", "Mesh Renderer"},
-                            {"mesh", "ball"},
-                            {"material", "fire_ball"}
-                        },
-                        {
-                            {"type", "Movement"},
-                            {"linearVelocity", {0, 0, 3}},
-                            {"angularVelocity", {0, 0, 0}}
-                        },
-                        {
-                            {"type", "Collision"},
-                            {"x", 0.25},
-                            {"y", 0.25},
-                            {"z", 0.25}
-                        }
-                    }}
-                };
+                nlohmann::json data = readGenerateConfig(randomX, randomY);
+                    
                 newEntity->deserialize(data); 
             }
 
