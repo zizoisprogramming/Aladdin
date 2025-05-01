@@ -3,6 +3,7 @@
 #include "../ecs/world.hpp"
 #include "../components/camera.hpp"
 #include "../components/mesh-renderer.hpp"
+#include "../components/light.hpp"
 #include "../asset-loader.hpp"
 
 #include <glad/gl.h>
@@ -37,6 +38,11 @@ namespace our
         // Objects used for rendering a skybox
         Mesh* skySphere;
         TexturedMaterial* skyMaterial;
+        //Objects used for lighting
+        LitMaterial* litMaterial;
+        std::vector<LightComponent*> lights;
+
+
         // Objects used for Postprocessing
         GLuint postprocessFrameBuffer, postProcessVertexArray;
         Texture2D *colorTarget, *depthTarget;

@@ -168,11 +168,17 @@ namespace our {
     void ForwardRenderer::render(World* world){
         // First of all, we search for a camera and for all the mesh renderers
         CameraComponent* camera = nullptr;
+        //light component array
+        //??
         opaqueCommands.clear();
         transparentCommands.clear();
         for(auto entity : world->getEntities()){
             // If we hadn't found a camera yet, we look for a camera in this entity
             if(!camera) camera = entity->getComponent<CameraComponent>();
+            //if this entity has a light component
+            if (auto light = entity->getComponent<LightComponent>(); light) {
+                lights.push_back(light);
+            }
             // If this entity has a mesh renderer component
             if(auto meshRenderer = entity->getComponent<MeshRendererComponent>(); meshRenderer){
                 // We construct a command from it
@@ -237,6 +243,12 @@ namespace our {
         for(auto& command : opaqueCommands){
             command.material->setup();
             command.material->shader->set("transform", VP * command.localToWorld);
+            //for lighting shaders
+            command.material->shader->set("camera_position", eye);
+            command.material->shader->set("object_to_world", command.localToWorld);
+            command.material->shader->set("object_to_world_inv_transpose", glm::transpose(glm::inverse(command.localToWorld)));
+            command.material->shader->set("view_projection", VP);
+
             command.mesh->draw();
         }
         
