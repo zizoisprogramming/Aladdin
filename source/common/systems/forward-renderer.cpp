@@ -253,7 +253,7 @@ namespace our {
                         light->attenuation.linear,
                         light->attenuation.quadratic
                     });
-                    shader->set(prefix + "cone_angles", glm::vec2{
+                    shader->set(prefix + "spot_angle", glm::vec2{
                         light->spot_angle.inner,
                         light->spot_angle.outer
                     });
