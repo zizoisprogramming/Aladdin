@@ -39,8 +39,9 @@ namespace our
         Mesh* skySphere;
         TexturedMaterial* skyMaterial;
         //Objects used for lighting
-        LitMaterial* litMaterial;
         std::vector<LightComponent*> lights;
+        glm::vec3 ambientLight = glm::vec3(1.0f);
+
 
 
         // Objects used for Postprocessing

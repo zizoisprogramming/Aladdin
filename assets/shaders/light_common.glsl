@@ -14,4 +14,16 @@
         return pow(max(0.0f, dot(view, reflected)), shininess);
     }
 
+    // This contains all the material properties in a single struct.
+    struct Light {
+    int type;                  // Light type (directional, point, spot)
+    vec3 color;                // Color of the light (diffuse, ambient, specular)
+    vec3 position;             // Position of the light (used for point and spot lights)
+    vec3 direction;            // Direction of the light (used for directional and spot lights)
+    vec3 attenuation;          // Attenuation factors (constant, linear, quadratic)
+    vec2 spot_angle;           // Inner and outer angle for spotlights
+};
+
+
+
 #endif
