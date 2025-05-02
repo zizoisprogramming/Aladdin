@@ -23,6 +23,10 @@
                 "textured":{
                     "vs":"assets/shaders/textured.vert",
                     "fs":"assets/shaders/textured.frag"
+                },
+                "lit": {
+                    "vs": "assets/shaders/light_transform.vert",
+                    "fs": "assets/shaders/light_array.frag"
                 }
             },
             "textures":{
@@ -90,8 +94,12 @@
                     "sampler": "pixelated"
                 },
                 "ground":{
-                    "type": "textured",
-                    "shader": "textured",
+                    "type": "lit",
+                    "shader": "lit",
+                    "emissionMap": "assets/textures/moon.jpg",
+                    "aoMap": "assets/textures/moon.jpg",
+                    "roughnessMap": "assets/textures/moon.jpg",
+                    "specularMap": "assets/textures/moon.jpg",
                     "pipelineState": {
                         "faceCulling":{
                             "enabled": false
@@ -120,8 +128,12 @@
                     "sampler": "default"
                 },
                 "villain":{
-                    "type": "textured",
-                    "shader": "textured",
+                    "type": "lit",
+                    "shader": "lit",
+                    "emissionMap": "assets/textures/moon.jpg",
+                    "aoMap": "assets/textures/moon.jpg",
+                    "roughnessMap": "assets/textures/moon.jpg",
+                    "specularMap": "assets/textures/moon.jpg",
                     "pipelineState": {
                         "faceCulling":{
                             "enabled": false
@@ -134,8 +146,12 @@
                     "sampler": "default"
                 },
                 "aladdin":{
-                    "type": "textured",
-                    "shader": "textured",
+                    "type": "lit",
+                    "shader": "lit",
+                    "emissionMap": "assets/textures/moon.jpg",
+                    "aoMap": "assets/textures/moon.jpg",
+                    "roughnessMap": "assets/textures/moon.jpg",
+                    "specularMap": "assets/textures/moon.jpg",
                     "pipelineState": {
                         "faceCulling":{
                             "enabled": false
@@ -148,8 +164,12 @@
                     "sampler": "default"
                 },
                 "wall":{
-                    "type": "textured",
-                    "shader": "textured",
+                    "type": "lit",
+                    "shader": "lit",
+                    "emissionMap": "assets/textures/moon.jpg",
+                    "aoMap": "assets/textures/moon.jpg",
+                    "roughnessMap": "assets/textures/moon.jpg",
+                    "specularMap": "assets/textures/moon.jpg",
                     "pipelineState": {
                         "faceCulling":{
                             "enabled": false
@@ -163,8 +183,12 @@
                     "sampler": "default"
                 },
                 "fire_ball":{
-                    "type": "textured",
-                    "shader": "textured",
+                    "type": "lit",
+                    "shader": "lit",
+                    "emissionMap": "assets/textures/moon.jpg",
+                    "aoMap": "assets/textures/moon.jpg",
+                    "roughnessMap": "assets/textures/moon.jpg",
+                    "specularMap": "assets/textures/moon.jpg",
                     "pipelineState": {
                         "faceCulling":{
                             "enabled": false
@@ -282,6 +306,27 @@
                         "x" : 0.25,
                         "y" : 0.25,
                         "z" : 0.25
+                    }
+                ]
+            },
+            {
+                "position": [0, 0, 5],
+                "components": [
+                    {
+                        "type": "Light",
+                        "lightType": "Directional",
+                        "direction": [0.5, 0, 1.0],
+                        "lightPosition": [0, 0, 5],
+                        "color": [1.0, 1.0, 1.0],
+                        "attenuation": {
+                            "constant": 1.0,
+                            "linear": 0.09,
+                            "quadratic": 0.032
+                        },
+                        "spot_angle": {
+                            "inner": 5,
+                            "outer": 10
+                        }
                     }
                 ]
             }
