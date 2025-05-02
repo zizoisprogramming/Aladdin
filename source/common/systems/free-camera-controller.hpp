@@ -10,6 +10,8 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
+#include <fstream>
+#include <iomanip> // for std::fixed and std::setprecision
 
 namespace our
 {
@@ -27,10 +29,28 @@ namespace our
             this->app = app;
         }
 
-        void checkEnd(glm::vec3& position) {
-            if (position.z <= -1) { // change villain  // Serialize this
-                app->changeState("won");
+        void checkEnd(World* world) {
+            glm::vec3 position;
+    
+            // Find Aladdin
+            for(auto entity : world->getEntities()){
+                if (entity->name == "aladdin") {
+                    position = entity->localTransform.position;
+                    glm::mat4 player_matrix = entity->getLocalToWorldMatrix();
+                    position = glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1));
+                }
             }
+            
+            // Check against villains
+            bool villainFound = false;
+            for(auto entity : world->getEntities()){
+                if (entity->name == "villain") {
+                    glm::mat4 player_matrix = entity->getLocalToWorldMatrix();
+                    if (position.z <= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).z) {
+                        app->changeState("won");
+                    }
+                }
+            } 
         }
 
         // This should be called every frame to update all entities containing a FreeCameraControllerComponent 
@@ -111,7 +131,7 @@ namespace our
                     position -= right * (deltaTime * current_sensitivity.x);
             }
 
-            checkEnd(position);
+            checkEnd(world);
             return position;
         }
 

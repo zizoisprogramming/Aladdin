@@ -20,7 +20,43 @@ namespace our
     class CollisionSystem {
     public:
     
+        bool safeToMove(World* world) {
+            glm::vec3 position;
+            int left_bound = 0;
+            int right_bound = 0;
 
+            // Find Aladdin
+            for(auto entity : world->getEntities()) {
+                if (entity->name == "aladdin") {
+                    CollisionComponent* collision = entity->getComponent<CollisionComponent>();
+                    position = entity->localTransform.position;
+                    glm::mat4 player_matrix = entity->getLocalToWorldMatrix();
+                    position = glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1));
+                    glm::vec3 halfSize2 = glm::vec3(collision->x, collision->y, collision->z) * 0.5f;
+                    left_bound = position.x - halfSize2.x;
+                    right_bound = position.x + halfSize2.x;
+                }
+            }
+            
+            // Check against left and right wall
+            for(auto entity : world->getEntities()) {
+                if (entity->name == "left_wall") {
+                    glm::mat4 matrix = entity->getLocalToWorldMatrix();
+                    if (left_bound <= glm::vec3(matrix * glm::vec4(0, 0, 0, 1)).x) {
+                        return false;
+                    }
+                }
+                if (entity->name == "right_wall") {
+                    glm::mat4 matrix = entity->getLocalToWorldMatrix();
+                    if (right_bound >= glm::vec3(matrix * glm::vec4(0, 0, 0, 1)).x) {
+                        return false;
+                    }
+                }
+            } 
+
+            return true;
+        }
+       
         bool check_collision(glm::vec3& pos1, glm::vec3& pos2, 
                     CollisionComponent* collision1, CollisionComponent* collision2) {
 
@@ -37,7 +73,7 @@ namespace our
         }
 
         // This should be called every frame to update all entities containing a MovementComponent. 
-        bool update(World* world, float deltaTime) {
+        int update(World* world, float deltaTime) {
             our::Entity* player = nullptr;
 
             for (auto entity : world->getEntities()){
@@ -58,10 +94,13 @@ namespace our
                     CollisionComponent* player_collision = player->getComponent<CollisionComponent>();
                     CollisionComponent* collision = entity->getComponent<CollisionComponent>();
                     if (check_collision(pos1, pos2, player_collision, collision))
-                        return true;
+                        return 1;
                 }
             }
-            return false;
+
+            if (!safeToMove(world))
+                return 2;
+            return 0;
         }
 
     };
