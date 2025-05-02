@@ -27,6 +27,7 @@ class Playstate: public our::State {
     float levels[3] = {10, 7, 3};
     int curr_ind = 0;
     bool not_again = false;
+    int last_num = 0;
 
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
@@ -46,15 +47,13 @@ class Playstate: public our::State {
         auto size = getApp()->getFrameBufferSize();
         curr_ind = 0;
         not_again = false;
+        last_num = 0;
         generateSystem.resetParameters();
         playSound.play(1);
         renderer.initialize(size, config["renderer"]);
     }
 
-    void onDraw(double deltaTime) override {
-        // Here, we just run a bunch of systems to control the world logic
-        movementSystem.update(&world, (float)deltaTime);
-        glm::vec3 position = cameraController.update(&world, (float)deltaTime);
+    bool level_up(glm::vec3& position) {
         bool flag = false;
         
         if (!not_again && position.z <= levels[curr_ind]){
@@ -64,18 +63,26 @@ class Playstate: public our::State {
             else
                 flag = true;
         }
+        return flag;
+    }
+
+    void onDraw(double deltaTime) override {
+        movementSystem.update(&world, (float)deltaTime, last_num);
+        glm::vec3 position = cameraController.update(&world, (float)deltaTime);
+
+        bool flag = level_up(position);
         generateSystem.update(&world, (float)deltaTime, flag);
-        if (collisionSystem.update(&world, (float)deltaTime))
+
+        int num = collisionSystem.update(&world, (float)deltaTime);
+        last_num = num;
+        if (num == 1) 
             getApp()->changeState("lost");
         
-        // And finally we use the renderer system to draw the scene
         renderer.render(&world);
 
-        // Get a reference to the keyboard object
         auto& keyboard = getApp()->getKeyboard();
 
         if(keyboard.justPressed(GLFW_KEY_ESCAPE)){
-            // If the escape  key is pressed in this frame, go to the play state
             getApp()->changeState("menu");
         }
     }
