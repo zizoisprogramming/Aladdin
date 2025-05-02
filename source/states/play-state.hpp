@@ -9,6 +9,7 @@
 #include <systems/generate.hpp>
 #include <systems/collision.hpp>
 #include<fstream>
+#include<systems/sound.hpp>
 
 #include <asset-loader.hpp>
 
@@ -21,6 +22,7 @@ class Playstate: public our::State {
     our::MovementSystem movementSystem;
     our::GenerateSystem generateSystem;
     our::CollisionSystem collisionSystem;
+    Sound playSound = Sound("C:/Users/Acer/Desktop/Graphics Project/Aladdin/assets/sounds/play.mp3", false);
 
     float levels[3] = {10, 7, 3};
     int curr_ind = 0;
@@ -45,6 +47,7 @@ class Playstate: public our::State {
         curr_ind = 0;
         not_again = false;
         generateSystem.resetParameters();
+        playSound.play(1);
         renderer.initialize(size, config["renderer"]);
     }
 
@@ -84,6 +87,7 @@ class Playstate: public our::State {
         cameraController.exit();
         // Clear the world
         world.clear();
+        playSound.stop();
         // and we delete all the loaded assets to free memory on the RAM and the VRAM
         our::clearAllAssets();
     }

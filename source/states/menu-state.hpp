@@ -6,6 +6,8 @@
 #include <texture/texture-utils.hpp>
 #include <material/material.hpp>
 #include <mesh/mesh.hpp>
+#include<systems/sound.hpp>
+
 
 #include <functional>
 #include <array>
@@ -46,6 +48,7 @@ class Menustate: public our::State {
     float time;
     // An array of the button that we can interact with
     std::array<Button, 2> buttons;
+    Sound startSound = Sound("C:/Users/Acer/Desktop/Graphics Project/Aladdin/assets/sounds/start.mp3", false);
 
     void onInitialize() override {
         // First, we create a material for the menu's background
@@ -106,6 +109,7 @@ class Menustate: public our::State {
         buttons[1].position = {830.0f, 644.0f};
         buttons[1].size = {400.0f, 33.0f};
         buttons[1].action = [this](){this->getApp()->close();};
+        startSound.play(1);
     }
 
     void onDraw(double deltaTime) override {
@@ -177,5 +181,6 @@ class Menustate: public our::State {
         delete menuMaterial;
         delete highlightMaterial->shader;
         delete highlightMaterial;
+        startSound.stop();
     }
 };
