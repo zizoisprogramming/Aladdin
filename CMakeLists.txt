@@ -97,6 +97,8 @@ set(COMMON_SOURCES
         source/common/systems/movement.hpp
         source/common/systems/generate.hpp
         source/common/systems/collision.hpp
+        source/common/systems/sound.hpp
+        source/common/systems/sound.cpp
 )
 
 # Define the directories in which to search for the included headers
@@ -107,6 +109,7 @@ include_directories(
         vendor/glm
         vendor/imgui
         vendor/utils
+        vendor/bass/c
 )
 
 
@@ -133,8 +136,16 @@ set(STATES_SOURCES
 # For each example, we add an executable target
 # Each target compiles one example source file and the common & vendor source files
 # Then we link GLFW with each target
+link_directories(${PROJECT_SOURCE_DIR}/vendor/bass/x64)
 add_executable(GAME_APPLICATION source/main.cpp ${STATES_SOURCES} ${COMMON_SOURCES} ${VENDOR_SOURCES})
-target_link_libraries(GAME_APPLICATION glfw)
+target_link_libraries(GAME_APPLICATION glfw bass)
+
+add_custom_command(TARGET GAME_APPLICATION POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${PROJECT_SOURCE_DIR}/vendor/bass/x64/bass.dll"
+        $<TARGET_FILE_DIR:GAME_APPLICATION>
+)
+
 if (UNIX AND NOT APPLE)
         target_link_libraries(GAME_APPLICATION OpenGL::GL)
         target_link_libraries(GAME_APPLICATION GLEW::GLEW)

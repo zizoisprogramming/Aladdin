@@ -49,8 +49,9 @@
             "samplers":{
                 "default":{},
                 "pixelated":{
-                    "MAG_FILTER": "GL_NEAREST"
-                }
+                    "MAG_FILTER": "GL_LINEAR"
+                },
+                "MAX_ANISOTROPY": 2.0
             },
             "materials":{
                 "metal":{
@@ -194,7 +195,7 @@
                     {
                         "position": [0, -1, -2],
                         "scale": [0.2, 0.2, 0.2],
-                        "rotation": [0, 180, 0],
+                        "rotation": [-10, 180, 0],
                         "components": [
                             {
                                 "type": "Mesh Renderer",
@@ -224,7 +225,7 @@
                 ]
             },
             { 
-                "position" : [0, 9, -3],
+                "position" : [0, 9, -3], // change villain
                 "scale" : [1.5, 1.5, 1.5],
                 "components": [
                     {
@@ -261,6 +262,7 @@
                 "rotation": [0, 0, 0],
                 "scale": [0.25, 0.25 , 0.25],
                 "hide" : true,
+                "threshold" : 1.0,
                 "components": [
                     {
                         "type": "Generate"
