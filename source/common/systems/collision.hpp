@@ -19,11 +19,11 @@ namespace our
     // For more information, see "common/components/movement.hpp"
     class CollisionSystem {
     public:
-    
-        bool safeToMove(World* world) {
+
+        int safeToMove(World* world) {
             glm::vec3 position;
-            int left_bound = 0;
-            int right_bound = 0;
+            float left_bound = 0;
+            float right_bound = 0;
 
             // Find Aladdin
             for(auto entity : world->getEntities()) {
@@ -41,20 +41,24 @@ namespace our
             // Check against left and right wall
             for(auto entity : world->getEntities()) {
                 if (entity->name == "left_wall") {
+                    CollisionComponent* collision = entity->getComponent<CollisionComponent>();
                     glm::mat4 matrix = entity->getLocalToWorldMatrix();
-                    if (left_bound <= glm::vec3(matrix * glm::vec4(0, 0, 0, 1)).x) {
-                        return false;
+                    glm::vec3 halfSize2 = glm::vec3(collision->x, collision->y, collision->z) * 0.5f;
+                    if (left_bound <= (glm::vec3(matrix * glm::vec4(0, 0, 0, 1)).x + halfSize2.x)) {
+                        return 2;
                     }
                 }
                 if (entity->name == "right_wall") {
+                    CollisionComponent* collision = entity->getComponent<CollisionComponent>();
                     glm::mat4 matrix = entity->getLocalToWorldMatrix();
-                    if (right_bound >= glm::vec3(matrix * glm::vec4(0, 0, 0, 1)).x) {
-                        return false;
+                    glm::vec3 halfSize2 = glm::vec3(collision->x, collision->y, collision->z) * 0.5f;
+                    if (right_bound >= (glm::vec3(matrix * glm::vec4(0, 0, 0, 1)).x - halfSize2.x)) {
+                        return 3;
                     }
                 }
             } 
 
-            return true;
+            return 0;
         }
        
         bool check_collision(glm::vec3& pos1, glm::vec3& pos2, 
@@ -93,13 +97,14 @@ namespace our
                     
                     CollisionComponent* player_collision = player->getComponent<CollisionComponent>();
                     CollisionComponent* collision = entity->getComponent<CollisionComponent>();
-                    if (check_collision(pos1, pos2, player_collision, collision))
+                    if (entity->name != "left_wall" && entity->name != "right_wall" && check_collision(pos1, pos2, player_collision, collision))
                         return 1;
                 }
             }
-
-            if (!safeToMove(world))
-                return 2;
+            
+            int num = safeToMove(world);
+            if (num)
+                return num;
             return 0;
         }
 

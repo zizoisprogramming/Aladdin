@@ -40,7 +40,6 @@ void Sound::changeVolume(int volume)
 }
 void Sound::play(int restart)
 {
-    std::cout << "here" << std::endl;
     BASS_ChannelPlay(channel, restart);
 }
 void Sound::pause()

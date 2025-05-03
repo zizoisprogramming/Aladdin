@@ -24,6 +24,8 @@ class Playstate: public our::State {
     our::CollisionSystem collisionSystem;
     Sound playSound = Sound("C:/Users/Acer/Desktop/Graphics Project/Aladdin/assets/sounds/play.mp3", false);
 
+    float initializationDelay = 2.0f;  
+    bool initializationComplete = false;
     float levels[3] = {10, 7, 3};
     int curr_ind = 0;
     bool not_again = false;
@@ -48,9 +50,12 @@ class Playstate: public our::State {
         curr_ind = 0;
         not_again = false;
         last_num = 0;
-        generateSystem.resetParameters();
+        initializationDelay = 2.0f;
+        initializationComplete = false;
+        generateSystem.deSerializeSystem();
         playSound.play(1);
         renderer.initialize(size, config["renderer"]);
+
     }
 
     bool level_up(glm::vec3& position) {
@@ -67,8 +72,15 @@ class Playstate: public our::State {
     }
 
     void onDraw(double deltaTime) override {
-        movementSystem.update(&world, (float)deltaTime, last_num);
-        glm::vec3 position = cameraController.update(&world, (float)deltaTime);
+        if (!initializationComplete) {
+            initializationDelay -= (float)deltaTime;
+            if (initializationDelay <= 0.0f) {
+                initializationComplete = true;
+            }
+            return;  
+        }
+        movementSystem.update(&world, (float)deltaTime);
+        glm::vec3 position = cameraController.update(&world, (float)deltaTime, last_num);
 
         bool flag = level_up(position);
         generateSystem.update(&world, (float)deltaTime, flag);

@@ -46,7 +46,7 @@ namespace our
             for(auto entity : world->getEntities()){
                 if (entity->name == "villain") {
                     glm::mat4 player_matrix = entity->getLocalToWorldMatrix();
-                    if (position.z <= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).z) {
+                    if (position.z - 1 <= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).z) {
                         app->changeState("won");
                     }
                 }
@@ -54,7 +54,7 @@ namespace our
         }
 
         // This should be called every frame to update all entities containing a FreeCameraControllerComponent 
-        glm::vec3 update(World* world, float deltaTime) {
+        glm::vec3 update(World* world, float deltaTime, int last_num) {
             // First of all, we search for an entity containing both a CameraComponent and a FreeCameraControllerComponent
             // As soon as we find one, we break
             CameraComponent* camera = nullptr;
@@ -122,13 +122,11 @@ namespace our
             if(app->getKeyboard().isPressed(GLFW_KEY_Q)) position += up * (deltaTime * current_sensitivity.y);
             if(app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * (deltaTime * current_sensitivity.y);
             // A & D moves the player left or right 
-            if(app->getKeyboard().isPressed(GLFW_KEY_D)) {
-                if (!((position + right * (deltaTime * current_sensitivity.x)).x >= (6 - 2))) // Serialize this
-                    position += right * (deltaTime * current_sensitivity.x);
+            if((last_num != 3) && app->getKeyboard().isPressed(GLFW_KEY_D)) {
+                position += right * (deltaTime * current_sensitivity.x);
             }
-            if(app->getKeyboard().isPressed(GLFW_KEY_A)) {
-                if (!((position - right * (deltaTime * current_sensitivity.x)).x <= (-6 + 2)))  // Serialize this
-                    position -= right * (deltaTime * current_sensitivity.x);
+            if((last_num != 2) && app->getKeyboard().isPressed(GLFW_KEY_A)) {
+                position -= right * (deltaTime * current_sensitivity.x);
             }
 
             checkEnd(world);
