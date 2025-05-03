@@ -5,13 +5,15 @@
 #include "../components/free-camera-controller.hpp"
 
 #include "../application.hpp"
+#include "../components/collision.hpp"
+
 
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <fstream>
-#include <iomanip> // for std::fixed and std::setprecision
+#include <iomanip> 
 
 namespace our
 {
@@ -22,11 +24,34 @@ namespace our
     class FreeCameraControllerSystem {
         Application* app; // The application in which the state runs
         bool mouse_locked = false; // Is the mouse locked
-
+        float bound_y = 4.0f;
+        float lower_bound = 0.0f;
+        std::string config_path = "config/generate.jsonc";
     public:
         // When a state enters, it should call this function and give it the pointer to the application
         void enter(Application* app){
             this->app = app;
+        }
+
+        void deSerializeSystem(World* world) {
+            std::ifstream file_in(config_path);
+            if(!file_in){
+                std::cerr << "Couldn't open file: " << config_path << std::endl;
+                return;
+            }
+            nlohmann::json app_config = nlohmann::json::parse(file_in, nullptr, true, true);
+            file_in.close();
+            bound_y = app_config["bound_y"];
+
+            for(auto entity : world->getEntities()) {
+                if (entity->name == "aladdin") {
+                    CollisionComponent* collision = entity->getComponent<CollisionComponent>();
+                    glm::mat4 player_matrix = entity->getLocalToWorldMatrix();
+                    glm::vec3 position = glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1));
+                    glm::vec3 halfSize2 = glm::vec3(collision->x, collision->y, collision->z) * 0.5f;
+                    lower_bound = halfSize2.y;
+                }
+            }
         }
 
         void checkEnd(World* world) {
@@ -43,7 +68,7 @@ namespace our
             
             // Check against villains
             bool villainFound = false;
-            for(auto entity : world->getEntities()){
+            for(auto entity : world->getEntities()) {
                 if (entity->name == "villain") {
                     glm::mat4 player_matrix = entity->getLocalToWorldMatrix();
                     if (position.z - 1 <= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).z) {
@@ -111,8 +136,8 @@ namespace our
             // if(app->getKeyboard().isPressed(GLFW_KEY_S)) position -= horizontalFront * ... 
 
             // Q/E (up/down) remains unchanged if you want vertical movement
-            if(app->getKeyboard().isPressed(GLFW_KEY_Q)) position += up * (deltaTime * current_sensitivity.y);
-            if(app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * (deltaTime * current_sensitivity.y);
+            if(position.y < bound_y && app->getKeyboard().isPressed(GLFW_KEY_Q)) position += up * (deltaTime * current_sensitivity.y);
+            if(position.y > lower_bound && app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * (deltaTime * current_sensitivity.y);
 
             // A/D (left/right) remains unchanged
             if((last_num != 3) && app->getKeyboard().isPressed(GLFW_KEY_D)) {

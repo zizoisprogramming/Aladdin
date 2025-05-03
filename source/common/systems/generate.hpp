@@ -38,6 +38,7 @@ namespace our
             level_up_val = app_config["level_up_val"];
             threshold = app_config["threshold"];
             got_bounds = app_config["got_bounds"];
+            bound_y = app_config["bound_y"];
         }
 
         float getBounds(World* world) {
