@@ -44,9 +44,10 @@ namespace our
             // Check against villains
             bool villainFound = false;
             for(auto entity : world->getEntities()){
-                if (entity->name == "villain") {
+                if (entity->name == "right_glass_wall") {
                     glm::mat4 player_matrix = entity->getLocalToWorldMatrix();
-                    if (position.z - 1 <= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).z) {
+                    std::cout << "position: " << position.x << " " << glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).x << std::endl;
+                    if (position.z - 1 <= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).z && position.z >= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).z && position.x + 2 >= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).x) {
                         app->changeState("won");
                     }
                 }

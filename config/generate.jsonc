@@ -1,9 +1,9 @@
 {
     "till_now": 0,
     "threshold": 1.0,
-    "level_up_val": 0.4,
+    "level_up_val": 0.2,
     "got_bounds" : false,
-    "generate_pos" : -3,
+    "generate_pos" : -15,
     "random" : {
         "position": [0, 1, 0],
         "rotation": [0, 0, 0],
