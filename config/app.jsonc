@@ -35,20 +35,19 @@
                 "wood": "assets/textures/wood.jpg",
                 "glass": "assets/textures/glass-panels.png",
                 "monkey": "assets/textures/monkey.png",
-                "villain": "assets/textures/villain.png",
+                "villain": "assets/textures/villain_diffuse.png",
                 "wall": "assets/textures/wall.png",
                 "fire_ball" : "assets/textures/fire_ball.png",
-                "aladdin" : "assets/textures/texture000.png"
+                "aladdin" : "assets/textures/lilo.png"
             },
             "meshes":{
                 "villain" : "assets/models/villain.obj",
-                "cube": "assets/models/test_cube.obj",
                 "monkey": "assets/models/monkey.obj",
                 "plane": "assets/models/plane.obj",
                 "sphere": "assets/models/sphere.obj",
                 "wall": "assets/models/wall.obj",
                 "ball" : "assets/models/ball.obj",
-                "aladdin" : "assets/models/aladdin.obj"
+                "aladdin" : "assets/models/aladdin4.obj"
             },
             "samplers":{
                 "default":{},
@@ -130,9 +129,8 @@
                 "villain":{
                     "type": "lit",
                     "shader": "lit",
-                    "emissionMap": "assets/textures/moon.jpg",
-                    "aoMap": "assets/textures/moon.jpg",
-                    "roughnessMap": "assets/textures/moon.jpg",
+                    "aoMap": "assets/textures/texture001.png",
+                    "roughnessMap": "assets/textures/villain_roughness.png",
                     "specularMap": "assets/textures/moon.jpg",
                     "pipelineState": {
                         "faceCulling":{
@@ -148,9 +146,9 @@
                 "aladdin":{
                     "type": "lit",
                     "shader": "lit",
-                    "emissionMap": "assets/textures/moon.jpg",
-                    "aoMap": "assets/textures/moon.jpg",
-                    "roughnessMap": "assets/textures/moon.jpg",
+                    "emissionMap": "assets/textures/aladdin_emit.png",
+                    "aoMap": "assets/textures/aov_aladdin.png",
+                    "roughnessMap": "assets/textures/texture002.png",
                     "specularMap": "assets/textures/moon.jpg",
                     "pipelineState": {
                         "faceCulling":{
@@ -217,6 +215,7 @@
                 ],
                 "children": [
                     {
+                        "name": "aladdin",
                         "position": [0, -1, -2],
                         "scale": [0.2, 0.2, 0.2],
                         "rotation": [-10, 180, 0],
@@ -228,7 +227,7 @@
                             },
                             {
                                 "type": "Collision",
-                                "x" : 1.548,
+                                "x" : 1.1,
                                 "y" : 1.6,
                                 "z" : 0.346  
                             }
@@ -249,7 +248,9 @@
                 ]
             },
             { 
-                "position" : [0, 9, -3], // change villain
+                "name" : "villain",
+                "rotation" : [0, -90, 0],
+                "position" : [0, 3.5, -3], // change villain
                 "scale" : [1.5, 1.5, 1.5],
                 "components": [
                     {
@@ -260,6 +261,7 @@
                 ]
             },
             { 
+                "name" : "left_wall",
                 "position" : [-6, 0, 3],
                 "rotation" : [0, 90, 0],
                 "components": [
@@ -267,10 +269,17 @@
                         "type": "Mesh Renderer",
                         "mesh": "wall",
                         "material": "wall"
+                    },
+                    {
+                        "type": "Collision",
+                        "x" : 2.2,
+                        "y" : 3.18,
+                        "z" : 7.15
                     }
                 ]
             },
             { 
+                "name" : "right_wall",
                 "position" : [6, 0, 3],
                 "rotation" : [0, -90, 0],
                 "components": [
@@ -278,6 +287,12 @@
                         "type": "Mesh Renderer",
                         "mesh": "wall",
                         "material": "wall"
+                    },
+                    {
+                        "type": "Collision",
+                        "x" : 2,
+                        "y" : 3.18,
+                        "z" : 7.15
                     }
                 ]
             },

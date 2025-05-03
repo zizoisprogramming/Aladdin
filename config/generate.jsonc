@@ -1,28 +1,35 @@
 {
-    "position": [0, 1, 0],
-    "rotation": [0, 0, 0],
-    "scale": [0.25, 0.25 , 0.25],
-    "hide" : true,
-    "threshold" : 1.0,
-    "components": [
-        {
-            "type": "Generate"
-        },
-        {
-            "type": "Mesh Renderer",
-            "mesh": "ball",
-            "material": "fire_ball"
-        },
-        {
-            "type": "Movement",
-            "linearVelocity" : [0, 0, 3],
-            "angularVelocity" : [0, 0, 0]   
-        },
-        {
-            "type": "Collision",
-            "x" : 0.25,
-            "y" : 0.25,
-            "z" : 0.25
-        }
-    ]
+    "till_now": 0,
+    "threshold": 1.0,
+    "level_up_val": 0.4,
+    "got_bounds" : false,
+    "generate_pos" : -3,
+    "random" : {
+        "position": [0, 1, 0],
+        "rotation": [0, 0, 0],
+        "scale": [0.25, 0.25 , 0.25],
+        "hide" : true,
+        "threshold" : 1.0,
+        "components": [
+            {
+                "type": "Generate"
+            },
+            {
+                "type": "Mesh Renderer",
+                "mesh": "ball",
+                "material": "fire_ball"
+            },
+            {
+                "type": "Movement",
+                "linearVelocity" : [0, 0, 3],
+                "angularVelocity" : [0, 0, 0]   
+            },
+            {
+                "type": "Collision",
+                "x" : 0.25,
+                "y" : 0.25,
+                "z" : 0.25
+            }
+        ]
+    }
 }
