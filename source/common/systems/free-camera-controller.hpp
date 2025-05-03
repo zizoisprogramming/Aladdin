@@ -89,25 +89,32 @@ namespace our
             fov = glm::clamp(fov, glm::pi<float>() * 0.01f, glm::pi<float>() * 0.99f); // We keep the fov in the range 0.01*PI to 0.99*PI
             camera->fovY = fov;
 
-            // We get the camera model matrix (relative to its parent) to compute the front, up and right directions
+            // Get the camera model matrix
             glm::mat4 matrix = entity->localTransform.toMat4();
 
+            // Calculate front, up, right directions
             glm::vec3 front = glm::vec3(matrix * glm::vec4(0, 0, -1, 0)),
-                      up = glm::vec3(matrix * glm::vec4(0, 1, 0, 0)), 
-                      right = glm::vec3(matrix * glm::vec4(1, 0, 0, 0));
+                    up = glm::vec3(matrix * glm::vec4(0, 1, 0, 0)), 
+                    right = glm::vec3(matrix * glm::vec4(1, 0, 0, 0));
+
+            // ====== NEW: Project front onto XZ plane (horizontal movement only) ======
+            glm::vec3 horizontalFront = glm::normalize(glm::vec3(front.x, 0.0f, front.z));
+            // ========================================================================
 
             glm::vec3 current_sensitivity = controller->positionSensitivity;
-            // If the LEFT SHIFT key is pressed, we multiply the position sensitivity by the speed up factor
-            if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)) current_sensitivity *= controller->speedupFactor;
+            if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)) 
+                current_sensitivity *= controller->speedupFactor;
 
-            // We change the camera position based on the keys WASD/QE
-            // S & W moves the player back and forth
-            if(app->getKeyboard().isPressed(GLFW_KEY_W)) position += front * (deltaTime * current_sensitivity.z);
-            // if(app->getKeyboard().isPressed(GLFW_KEY_S)) position -= front * (deltaTime * current_sensitivity.z); // no back
-            // Q & E moves the player up and down
+            // Use horizontalFront instead of front for W/S movement
+            if(app->getKeyboard().isPressed(GLFW_KEY_W)) 
+                position += horizontalFront * (deltaTime * current_sensitivity.z);
+            // if(app->getKeyboard().isPressed(GLFW_KEY_S)) position -= horizontalFront * ... 
+
+            // Q/E (up/down) remains unchanged if you want vertical movement
             if(app->getKeyboard().isPressed(GLFW_KEY_Q)) position += up * (deltaTime * current_sensitivity.y);
             if(app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * (deltaTime * current_sensitivity.y);
-            // A & D moves the player left or right 
+
+            // A/D (left/right) remains unchanged
             if((last_num != 3) && app->getKeyboard().isPressed(GLFW_KEY_D)) {
                 position += right * (deltaTime * current_sensitivity.x);
             }
@@ -130,3 +137,14 @@ namespace our
     };
 
 }
+
+/*
+
+glm::vec3 update(World* world, float deltaTime, int last_num) {
+    // ... [previous code remains the same until the matrix calculation]
+
+    
+
+    // ... [rest of the function remains the same]
+}
+*/
