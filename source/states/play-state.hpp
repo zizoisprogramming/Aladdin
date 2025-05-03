@@ -53,6 +53,7 @@ class Playstate: public our::State {
         initializationDelay = 2.0f;
         initializationComplete = false;
         generateSystem.deSerializeSystem();
+        cameraController.deSerializeSystem(&world);
         playSound.play(1);
         renderer.initialize(size, config["renderer"]);
 
