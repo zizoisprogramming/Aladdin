@@ -1,8 +1,9 @@
 {
     "bound_y": 4.0,
+    "bound_y_low": 0.5,
     "till_now": 0,
-    "threshold": 1.0,
-    "level_up_val": 0.2,
+    "threshold": 0.95,
+    "level_up_val": 0.37,
     "got_bounds" : false,
     "generate_pos" : -15,
     "random" : {
@@ -22,7 +23,7 @@
             },
             {
                 "type": "Movement",
-                "linearVelocity" : [0, 0, 3],
+                "linearVelocity" : [0, 0, 8],
                 "angularVelocity" : [0, 0, 0]   
             },
             {

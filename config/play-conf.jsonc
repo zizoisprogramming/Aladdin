@@ -1,0 +1,10 @@
+{
+    "initializationDelay" : 2.0,
+    "initializationComplete" : false,
+    "levels" : [12, 7, 3],
+    "curr_ind" : 0,
+    "not_again" : false,
+    "last_num" : 0,
+    "hitOnce" : false,
+    "hitDelayTimer" : 0.0
+}
