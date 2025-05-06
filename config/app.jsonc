@@ -353,7 +353,7 @@
                     {
                         "type": "Light",
                         "lightType": "Directional",
-                        "direction": [0.0, -1.0, 0.0],
+                        "direction": [0.0, 0.0, -1.0],
                         "lightPosition": [0, 0, -10],
                         "color": [1.0, 1.0, 1.0],
                         "attenuation": {

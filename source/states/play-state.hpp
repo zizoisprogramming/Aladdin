@@ -59,25 +59,19 @@ class Playstate: public our::State {
     }
 
     void onInitialize() override {
-        // First of all, we get the scene configuration from the app config
         auto& config = getApp()->getConfig()["scene"];
-        // If we have assets in the scene config, we deserialize them
         if(config.contains("assets")){
             our::deserializeAllAssets(config["assets"]);
         }
-        // If we have a world in the scene config, we use it to populate our world
         if(config.contains("world")){
             world.deserialize(config["world"]);
         }
     
-        // We initialize the camera controller system since it needs a pointer to the app
         cameraController.enter(getApp());
-        // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
         deSerializeState();
         playSound.play(1);
         renderer.initialize(size, config["renderer"]);
-
     }
 
     bool level_up(glm::vec3& position) {
@@ -94,6 +88,7 @@ class Playstate: public our::State {
     }
 
     void onDraw(double deltaTime) override {
+        
         if (!initializationComplete) {
             initializationDelay -= (float)deltaTime;
             if (initializationDelay <= 0.0f) {
@@ -101,6 +96,7 @@ class Playstate: public our::State {
             }
             return;  
         }
+
         movementSystem.update(&world, (float)deltaTime);
         glm::vec3 position = cameraController.update(&world, (float)deltaTime, last_num);
 
@@ -126,13 +122,6 @@ class Playstate: public our::State {
         if(keyboard.justPressed(GLFW_KEY_ESCAPE)){
             getApp()->changeState("menu");
         }
-
-        if(keyboard.justPressed(GLFW_KEY_2)){
-            renderer.switchEffect("confuse");
-        }
-        if(keyboard.justPressed(GLFW_KEY_3)){
-            renderer.switchEffect("normal");
-        }
     }
 
     void onDestroy() override {
@@ -140,7 +129,6 @@ class Playstate: public our::State {
         renderer.destroy();
         // On exit, we call exit for the camera controller system to make sure that the mouse is unlocked
         cameraController.exit();
-        // Clear the world
         world.clear();
         playSound.stop();
         // and we delete all the loaded assets to free memory on the RAM and the VRAM
