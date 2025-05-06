@@ -223,7 +223,7 @@ namespace our {
                 shader->set("view_projection", VP);
                 shader->set("camera_position", eye); // camera world position
                 shader->set("ambient_light", ambientLight);
-                std::cout <<"ambient light: " << ambientLight.x << " " << ambientLight.y << " " << ambientLight.z << std::endl;
+                //std::cout <<"ambient light: " << ambientLight.x << " " << ambientLight.y << " " << ambientLight.z << std::endl;
                 shader->set("light_count", static_cast<int>(lights.size()));
                 
                
@@ -317,6 +317,23 @@ namespace our {
             postprocessMaterial->setup();
             glBindVertexArray(this->postProcessVertexArray);
             glDrawArrays(GL_TRIANGLES, 0, 3);
+        }
+    }
+
+    void ForwardRenderer::switchEffect(const std::string& newEffect) {
+        std::cerr << newEffect<< std::endl;
+        if (postprocessShaders.count(newEffect)) {
+            currentEffect = newEffect;
+            postprocessMaterial->shader = postprocessShaders[currentEffect];
+            postprocessMaterial->shader->set("time", float(glfwGetTime()));
+        }
+    }
+
+    void ForwardRenderer::startShake() {
+        if (postprocessShaders.count("shake")) {
+            currentEffect = "shake";
+            shakeStartTime = glfwGetTime();
+            shaking = true;
         }
     }
 

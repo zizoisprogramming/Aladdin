@@ -54,7 +54,7 @@ namespace our
 
         bool shaking = false;
         double shakeStartTime = -1.0;
-        double shakeDuration = 5.0;
+        double shakeDuration = 2.0;
 
     public:
         // Initialize the renderer including the sky and the Postprocessing objects.
@@ -65,21 +65,8 @@ namespace our
         // This function should be called every frame to draw the given world
         void render(World* world);
 
-        void switchEffect(const std::string& newEffect) {
-            std::cerr << newEffect<< std::endl;
-            if (postprocessShaders.count(newEffect)) {
-                currentEffect = newEffect;
-                postprocessMaterial->shader = postprocessShaders[currentEffect];
-                postprocessMaterial->shader->set("time", float(glfwGetTime()));
-            }
-        }
-        void startShake() {
-            if (postprocessShaders.count("shake")) {
-                currentEffect = "shake";
-                shakeStartTime = glfwGetTime();
-                shaking = true;
-            }
-        }
+        void switchEffect(const std::string& newEffect);
+        void startShake();
     };
 
 }

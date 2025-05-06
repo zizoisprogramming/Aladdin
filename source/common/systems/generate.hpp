@@ -23,6 +23,7 @@ namespace our
         bool got_bounds = false;
         float bound_x = 0.0;
         float bound_y = 4.0;
+        float bound_y_low = 0.0;
     public:
 
         void deSerializeSystem() {
@@ -39,6 +40,7 @@ namespace our
             threshold = app_config["threshold"];
             got_bounds = app_config["got_bounds"];
             bound_y = app_config["bound_y"];
+            bound_y_low = app_config["bound_y_low"];
         }
 
         float getBounds(World* world) {
@@ -70,39 +72,29 @@ namespace our
         }
         void update(World* world, float deltaTime, bool level_up = false) {
             till_now += deltaTime;
-            bool first = false;
-            for (auto entity : world->getEntities()) {
-                GenerateComponent* generate = entity->getComponent<GenerateComponent>();
-                if (generate) {
-                    first = true;
-                    if (generate->hide) {
-                        entity->localTransform.position = glm::vec3(0, 0, -3);
-                        generate->hide = false;
-                        first = false;
-                    }
-                }
-            }
+
             if (level_up)
                 threshold -= level_up_val;
 
-            if (first && till_now >= threshold) {
+            if (till_now >= threshold) {
                 till_now = 0;
 
                 Entity* newEntity = world->add(); 
                 newEntity->parent = nullptr;
 
-                std::random_device rd;  
-                std::mt19937 gen(rd()); 
+                 
                 if (!got_bounds)
                     bound_x = getBounds(world);
+                
+                std::random_device rd;  
+                std::mt19937 gen(rd());
                 std::uniform_real_distribution<float> distX(-bound_x, bound_x);
-                std::uniform_real_distribution<float> distY(0.0f, bound_y);  
+                std::uniform_real_distribution<float> distY(bound_y_low, bound_y);  
                 
                 float randomX = distX(gen);
                 float randomY = distY(gen);
 
                 nlohmann::json data = readGenerateConfig(randomX, randomY);
-                    
                 newEntity->deserialize(data); 
             }
 

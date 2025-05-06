@@ -69,10 +69,9 @@ namespace our
             // Check against villains
             bool villainFound = false;
             for(auto entity : world->getEntities()){
-                if (entity->name == "right_glass_wall") {
+                if (entity->name == "end_glass_wall") {
                     glm::mat4 player_matrix = entity->getLocalToWorldMatrix();
-                    std::cout << "position: " << position.x << " " << glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).x << std::endl;
-                    if (position.z - 1 <= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).z && position.z >= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).z && position.x + 2 >= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).x) {
+                    if (position.z - 1 <= glm::vec3(player_matrix * glm::vec4(0, 0, 0, 1)).z ) {
                         app->changeState("won");
                     }
                 }
@@ -92,7 +91,7 @@ namespace our
             }
             // If there is no entity with both a CameraComponent and a FreeCameraControllerComponent, we can do nothing so we return
             if(!(camera && controller)) return {0, 0, 0};
-            // Get the entity that we found via getOwner of camera (we could use controller->getOwner())
+            // Get the entity that we found viea getOwner of camera (we could use controller->getOwner())
             Entity* entity = camera->getOwner();
 
             // If the left mouse button is pressed, we lock and hide the mouse. This common in First Person Games.

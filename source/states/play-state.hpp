@@ -23,6 +23,7 @@ class Playstate: public our::State {
     our::GenerateSystem generateSystem;
     our::CollisionSystem collisionSystem;
     Sound playSound = Sound("C:/Users/Acer/Desktop/Graphics Project/Aladdin/assets/sounds/play.mp3", false);
+    std::string config_path = "config/play-conf.jsonc";
 
     float initializationDelay = 2.0f;  
     bool initializationComplete = false;
@@ -30,6 +31,32 @@ class Playstate: public our::State {
     int curr_ind = 0;
     bool not_again = false;
     int last_num = 0;
+    bool hitOnce = false;
+    float hitDelayTimer = 0.0f;
+
+    void deSerializeState() {
+        std::ifstream file_in(config_path);
+        if(!file_in){
+            std::cerr << "Couldn't open file: " << config_path << std::endl;
+            return;
+        }
+        nlohmann::json state_config = nlohmann::json::parse(file_in, nullptr, true, true);
+        file_in.close();
+
+        initializationComplete = state_config["initializationComplete"];
+        initializationDelay = state_config["initializationDelay"];
+        last_num = state_config["last_num"];
+        curr_ind = state_config["curr_ind"];
+        not_again = state_config["not_again"];
+        levels[0] = state_config["levels"][0];
+        levels[1] = state_config["levels"][1];
+        levels[2] = state_config["levels"][2];
+        hitOnce = state_config["hitOnce"];
+        hitDelayTimer = state_config["hitDelayTimer"];
+
+        generateSystem.deSerializeSystem();
+        cameraController.deSerializeSystem(&world);
+    }
 
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
@@ -47,13 +74,7 @@ class Playstate: public our::State {
         cameraController.enter(getApp());
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
-        curr_ind = 0;
-        not_again = false;
-        last_num = 0;
-        initializationDelay = 2.0f;
-        initializationComplete = false;
-        generateSystem.deSerializeSystem();
-        cameraController.deSerializeSystem(&world);
+        deSerializeState();
         playSound.play(1);
         renderer.initialize(size, config["renderer"]);
 
@@ -85,18 +106,32 @@ class Playstate: public our::State {
 
         bool flag = level_up(position);
         generateSystem.update(&world, (float)deltaTime, flag);
-
         int num = collisionSystem.update(&world, (float)deltaTime);
         last_num = num;
-        if (num == 1) 
-            getApp()->changeState("lost");
+        hitDelayTimer += 1.0;
+        if (num == 1) {
+            if (hitOnce) {
+                if (hitDelayTimer >= 100.0f) {
+                    getApp()->changeState("lost");
+                }
+            } else {
+                renderer.startShake();  
+                hitDelayTimer = 0.0f;
+            }
+            hitOnce = true;
+        }
         
         renderer.render(&world);
-
         auto& keyboard = getApp()->getKeyboard();
-
         if(keyboard.justPressed(GLFW_KEY_ESCAPE)){
             getApp()->changeState("menu");
+        }
+
+        if(keyboard.justPressed(GLFW_KEY_2)){
+            renderer.switchEffect("confuse");
+        }
+        if(keyboard.justPressed(GLFW_KEY_3)){
+            renderer.switchEffect("normal");
         }
     }
 
