@@ -45,14 +45,14 @@ class Playstate: public our::State {
 
         initializationComplete = state_config["initializationComplete"];
         initializationDelay = state_config["initializationDelay"];
-        last_num = state_config["last_num"];
-        curr_ind = state_config["curr_ind"];
-        not_again = state_config["not_again"];
-        levels[0] = state_config["levels"][0];
-        levels[1] = state_config["levels"][1];
-        levels[2] = state_config["levels"][2];
-        hitOnce = state_config["hitOnce"];
-        hitDelayTimer = state_config["hitDelayTimer"];
+        last_num = state_config.value("last_num", 0); 
+        curr_ind = state_config.value("curr_ind", 0);
+        not_again = state_config.value("not_again", false);
+        levels[0] = state_config.value("levels", {10, 7, 3})[0];
+        levels[1] = state_config.value("levels", {10, 7, 3})[1];
+        levels[2] = state_config.value("levels", {10, 7, 3})[2];
+        hitOnce = state_config.value("hitOnce", false);
+        hitDelayTimer = state_config.value("hitDelayTimer", 0.0f);
 
         generateSystem.deSerializeSystem();
         cameraController.deSerializeSystem(&world);

@@ -223,7 +223,6 @@ namespace our {
                 shader->set("view_projection", VP);
                 shader->set("camera_position", eye); // camera world position
                 shader->set("ambient_light", ambientLight);
-                //std::cout <<"ambient light: " << ambientLight.x << " " << ambientLight.y << " " << ambientLight.z << std::endl;
                 shader->set("light_count", static_cast<int>(lights.size()));
                 
                

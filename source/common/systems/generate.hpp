@@ -20,7 +20,6 @@ namespace our
         float till_now = 0;
         float threshold = 1.0;
         float level_up_val = 0.4;
-        bool got_bounds = false;
         float bound_x = 0.0;
         float bound_y = 4.0;
         float bound_y_low = 0.0;
@@ -35,25 +34,12 @@ namespace our
             nlohmann::json app_config = nlohmann::json::parse(file_in, nullptr, true, true);
             file_in.close();
 
-            till_now = app_config["till_now"];
-            level_up_val = app_config["level_up_val"];
-            threshold = app_config["threshold"];
-            got_bounds = app_config["got_bounds"];
-            bound_y = app_config["bound_y"];
-            bound_y_low = app_config["bound_y_low"];
+            till_now = app_config.value("till_now", 0.0f);
+            level_up_val = app_config.value("level_up_val", 0.37f);
+            threshold = app_config.value("threshold", 1.0f);
+            bound_y = app_config.value("bound_y", 4.0f);
+            bound_y_low = app_config.value("bound_y_low", 1.0f);
         }
-
-        float getBounds(World* world) {
-            for(auto entity : world->getEntities()) {
-                if (entity->name == "right_wall") {
-                    glm::mat4 matrix = entity->getLocalToWorldMatrix();
-                    got_bounds = true;
-                    return glm::vec3(matrix * glm::vec4(0, 0, 0, 1)).x - 1;
-                }
-            }
-            return 0.0;
-        }
-        
 
         nlohmann::json readGenerateConfig(float randomX, float randomY) {
             std::ifstream file_in(config_path);
@@ -82,10 +68,6 @@ namespace our
                 Entity* newEntity = world->add(); 
                 newEntity->parent = nullptr;
 
-                 
-                if (!got_bounds)
-                    bound_x = getBounds(world);
-                
                 std::random_device rd;  
                 std::mt19937 gen(rd());
                 std::uniform_real_distribution<float> distX(-bound_x, bound_x);

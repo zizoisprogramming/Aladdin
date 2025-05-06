@@ -14,7 +14,7 @@ Sound::Sound(const char *path, bool loop)
         // NULL is the callback
         if (!BASS_Init(-1, 44100, 0, 0, NULL))
         {
-            std::cout << "Can't initialize device" << std::endl;
+            // std::cout << "Can't initialize device" << std::endl;
         }
         else
         {
@@ -30,7 +30,7 @@ Sound::Sound(const char *path, bool loop)
     channel = BASS_StreamCreateFile(false, path, 0, 0, loop ? BASS_SAMPLE_LOOP : BASS_SAMPLE_FLOAT);
     if (!channel)
     {
-        std::cout << "Can't load sample" << std::endl;
+        // std::cout << "Can't load sample" << std::endl;
     }
 }
 void Sound::changeVolume(int volume)
