@@ -5,6 +5,7 @@
     "threshold": 0.95,
     "level_up_val": 0.37,
     "got_bounds" : false,
+    "bound_x" : 5.0,
     "generate_pos" : -15,
     "random" : {
         "position": [0, 1, 0],

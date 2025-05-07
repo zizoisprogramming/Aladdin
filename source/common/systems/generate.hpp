@@ -38,6 +38,7 @@ namespace our
             level_up_val = app_config.value("level_up_val", 0.37f);
             threshold = app_config.value("threshold", 1.0f);
             bound_y = app_config.value("bound_y", 4.0f);
+            bound_x = app_config.value("bound_x", 5.0f);
             bound_y_low = app_config.value("bound_y_low", 1.0f);
         }
 

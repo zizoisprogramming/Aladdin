@@ -48,15 +48,20 @@ class Playstate: public our::State {
         last_num = state_config.value("last_num", 0); 
         curr_ind = state_config.value("curr_ind", 0);
         not_again = state_config.value("not_again", false);
-        levels[0] = state_config.value("levels", {10, 7, 3})[0];
-        levels[1] = state_config.value("levels", {10, 7, 3})[1];
-        levels[2] = state_config.value("levels", {10, 7, 3})[2];
+        nlohmann::json default_levels = {10, 7, 3};
+        nlohmann::json levels_json = state_config.value("levels", default_levels);
+
+        levels[0] = levels_json[0];
+        levels[1] = levels_json[1];
+        levels[2] = levels_json[2];
+        
         hitOnce = state_config.value("hitOnce", false);
         hitDelayTimer = state_config.value("hitDelayTimer", 0.0f);
 
         generateSystem.deSerializeSystem();
         cameraController.deSerializeSystem(&world);
     }
+
 
     void onInitialize() override {
         auto& config = getApp()->getConfig()["scene"];

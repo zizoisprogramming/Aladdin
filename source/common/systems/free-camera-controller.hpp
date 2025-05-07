@@ -162,14 +162,3 @@ namespace our
     };
 
 }
-
-/*
-
-glm::vec3 update(World* world, float deltaTime, int last_num) {
-    // ... [previous code remains the same until the matrix calculation]
-
-    
-
-    // ... [rest of the function remains the same]
-}
-*/

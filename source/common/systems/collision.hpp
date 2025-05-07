@@ -38,7 +38,6 @@ namespace our
                 }
             }
             
-            // Check against left and right wall
             for(auto entity : world->getEntities()) {
                 if (entity->name == "left_wall") {
                     CollisionComponent* collision = entity->getComponent<CollisionComponent>();
